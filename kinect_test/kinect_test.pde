@@ -4,7 +4,7 @@
 
 // https://github.com/shiffman/OpenKinect-for-Processing
 // http://shiffman.net/p5/kinect/
-
+//kommentti
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
 
