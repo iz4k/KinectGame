@@ -43,7 +43,7 @@ void setup() {
 
 void draw() {
   frameRate(30);
-  background(200, 200, 200);
+  background(200, 200, 200);    
   //MAIN MENU THINGS
   if(!playing){
     textAlign(CENTER, CENTER);
@@ -61,10 +61,7 @@ void draw() {
   if(playing){
     testWall.draw();
     testWall.growSize();
-    if(testWall.checkEnd()){
-      clear();
-      playing = false;
-    }
+    
   }
   
   //minDepth = mouseY;
@@ -94,8 +91,21 @@ void draw() {
   imageMode(CORNER);
   image(depthImg, 0, 0);  //the image we are interested about!!!
   tint(255, 60);
-
   fill(0);
+  
+  if(testWall.checkEnd(depthImg.pixels)){
+      
+      clear();
+      playing = false;
+    }
+    
+  /*if(endState){
+    imageMode(CORNER);
+    PImage img = loadImage("t.png");
+    image(img, 0, 0);  //the image we are interested about!!!
+    tint(255, 60);
+    fill(0);
+  }*/
   //text("TILT: " + angle, 10, 20);
   //text("THRESHOLD: [" + minDepth + ", " + maxDepth + "]", 10, 36);
   
