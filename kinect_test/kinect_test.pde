@@ -64,35 +64,31 @@ void draw() {
     testWall.draw();
     testWall.growSize();
   }
-  
-  //minDepth = mouseY;
-  //maxDepth = mouseX;
-  // Draw the raw image
-  //image(kinect.getDepthImage(), 0, 0);
 
   // Drawing the camera image
-  int[] rawDepth = kinect.getRawDepth();  //depthData
+  int[] rawDepth = kinect.getRawDepth();  //depthData in some kind of form
+  
   for (int i=0; i < rawDepth.length; i++) {
-    int xPix = i % kinect.width;
-    int yPix = i / kinect.height;
-    int horizontalMargin = 0;
-    int verticalMargin = 0;
-    if (xPix > horizontalMargin && xPix < kinect.width - horizontalMargin &&  //magins
-        yPix > verticalMargin) {
+    //int xPix = i % kinect.width;
+    //int yPix = i / kinect.height;
+    //int horizontalMargin = 0;
+    //int verticalMargin = 0;
+    //if (xPix > horizontalMargin && xPix < kinect.width - horizontalMargin &&  //magins
+    //    yPix > verticalMargin) {
       if (rawDepth[i] >= minDepth && rawDepth[i] <= maxDepth) {
         depthImg.pixels[i] = color(255, 100, 90);  //we care only about one color
       } else {
-        depthImg.pixels[i] = color(100, 100, 100);  //empty space with black
+        depthImg.pixels[i] = color(200, 200, 200);  //empty space with grey
       }
-    }
+    //}
   }
    
-  // Draw the thresholded image
+  // Drawing the camera image
   depthImg.updatePixels();      //update necessary
   imageMode(CENTER);
   image(depthImg, init_width/2, init_height/2); //align-center
   //image(depthImg, 0, 0, init_width, init_height);  //the image we are interested about!!!
-  //tint(255, 60);
+  tint(255, 60);
   fill(0);
   
   if(testWall.checkEnd(depthImg.pixels)){

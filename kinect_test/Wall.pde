@@ -17,13 +17,13 @@ class Wall{
     
    img = loadImage("reikaseinassa.png");
    imageMode(CENTER);
-    println(width, height);
-    image(img, width/2, height/2, x, y);  //(kuva, keskipisteet, dimensiot)kuvan koko kasvaa kun x ja y muuttuvat,
-    //perspective lines
-    line(width/2 - x/2, height/2 - y/2, 0, 0);
-    line(width/2 + x/2, height/2 - y/2, init_width, 0);
-    line(width/2 + x/2, height/2 + y/2, init_width, init_height);
-    line(width/2 - x/2, height/2 + y/2, 0, init_height);
+    
+   image(img, width/2, height/2, x, y);  //(kuva, keskipisteet, dimensiot)kuvan koko kasvaa kun x ja y muuttuvat,
+   //perspective lines
+   line(width/2 - x/2, height/2 - y/2, 0, 0);
+   line(width/2 + x/2, height/2 - y/2, init_width, 0);
+   line(width/2 + x/2, height/2 + y/2, init_width, init_height);
+   line(width/2 - x/2, height/2 + y/2, 0, init_height);
  }
   
  void growSize(){
