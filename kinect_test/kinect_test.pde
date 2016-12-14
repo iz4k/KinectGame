@@ -9,7 +9,7 @@
 
 import org.openkinect.freenect.*;
 import org.openkinect.processing.*;
-boolean mirror = false;
+boolean mirror = true;
 
 Kinect kinect;
 
@@ -18,27 +18,29 @@ PImage depthImg;
 
 // Which pixels do we care about?
 /*around 3m from the kinect-camera*/
-int minDepth = 900;    
-int maxDepth = 950;
+int minDepth = 950;    
+int maxDepth = 980;
+
 // What is the kinect's angle
 float angle;
 
-int init_width = 640;
-int init_height = 480;
+//window dimensions
+int init_width = 1240;
+int init_height = 480;  //this will also be the height of the camera-image
 
 Wall testWall = new Wall(init_width, init_height);
 boolean playing = false;
 
 void setup() {
-  size(640, 480);
+  size(1240, 480);
 
-  kinect = new Kinect(this);
+  kinect = new Kinect(this);    //kinect's own dimensions is 640x480
   kinect.initDepth();
+  kinect.enableMirror(mirror);
   angle = kinect.getTilt();
-
-  // Blank image
-  depthImg = new PImage(kinect.width, kinect.height);
   
+  // Blank image
+  depthImg = new PImage(kinect.width, kinect.height);  //up-scaled dimensions for depthImage 
 }
 
 void draw() {
@@ -61,7 +63,6 @@ void draw() {
   if(playing){
     testWall.draw();
     testWall.growSize();
-    
   }
   
   //minDepth = mouseY;
@@ -69,31 +70,33 @@ void draw() {
   // Draw the raw image
   //image(kinect.getDepthImage(), 0, 0);
 
-  // Threshold the depth image
-  int[] rawDepth = kinect.getRawDepth();
+  // Drawing the camera image
+  int[] rawDepth = kinect.getRawDepth();  //depthData
   for (int i=0; i < rawDepth.length; i++) {
     int xPix = i % kinect.width;
     int yPix = i / kinect.height;
-    int horizontalMargin = 50;
-    int verticalMargin = 50;
+    int horizontalMargin = 0;
+    int verticalMargin = 0;
     if (xPix > horizontalMargin && xPix < kinect.width - horizontalMargin &&  //magins
         yPix > verticalMargin) {
       if (rawDepth[i] >= minDepth && rawDepth[i] <= maxDepth) {
         depthImg.pixels[i] = color(255, 100, 90);  //we care only about one color
       } else {
-        depthImg.pixels[i] = color(0);
+        depthImg.pixels[i] = color(100, 100, 100);  //empty space with black
       }
     }
   }
-
+   
   // Draw the thresholded image
-  depthImg.updatePixels();
-  imageMode(CORNER);
-  image(depthImg, 0, 0);  //the image we are interested about!!!
-  tint(255, 60);
+  depthImg.updatePixels();      //update necessary
+  imageMode(CENTER);
+  image(depthImg, init_width/2, init_height/2); //align-center
+  //image(depthImg, 0, 0, init_width, init_height);  //the image we are interested about!!!
+  //tint(255, 60);
   fill(0);
   
   if(testWall.checkEnd(depthImg.pixels)){
+      // testWall = new Wall(width, height, uuskuva);
       
       clear();
       playing = false;
@@ -142,6 +145,7 @@ void mouseClicked() {
   if(mouseX > (width/2 - 75) && mouseX < (width/2 + 75)
     && mouseY > (height/2 - 40) && mouseY < (height/2 + 40)
     && !playing){
+     println("playing");
      clear();
      playing = true;
   }

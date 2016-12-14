@@ -1,10 +1,11 @@
 class Wall{
- 
- float speed = 1.05;
- float x = 133.0;
- float y = 100.0;
+ float init_wall_x = 1240.0/480*100.0;
+ float init_wall_y = 100.0;
+ float speed = 1.02;
+ float x = init_wall_x;                 //kauimmaisen kuvan dimensiont
+ float y = init_wall_y;                  
  int init_width, init_height;
-PImage img;
+ PImage img;
     
     
  Wall(int orig_width, int orig_height){
@@ -14,9 +15,11 @@ PImage img;
  
  void draw(){
     
-   img = loadImage("person.jpg");
-    imageMode(CENTER);
-    image(img, width/2, height/2, x, y);
+   img = loadImage("reikaseinassa.png");
+   imageMode(CENTER);
+    println(width, height);
+    image(img, width/2, height/2, x, y);  //(kuva, keskipisteet, dimensiot)kuvan koko kasvaa kun x ja y muuttuvat,
+    //perspective lines
     line(width/2 - x/2, height/2 - y/2, 0, 0);
     line(width/2 + x/2, height/2 - y/2, init_width, 0);
     line(width/2 + x/2, height/2 + y/2, init_width, init_height);
@@ -26,11 +29,12 @@ PImage img;
  void growSize(){
    x = x * speed;
    y = y * speed;
-   if(x > init_width){
-    x = init_width;
-   }
-   if(y > init_height){
+   //if(x > init_width){
+   // x = init_width;
+   //}
+   if(y >= init_height){
     y = init_height;
+    x = init_width;
    }
  }
  
@@ -53,8 +57,8 @@ PImage img;
      }*/
      
      
-     x = 133.0;
-     y = 100.0;
+     x = init_wall_x;
+     y = init_wall_y;
      //jos halutaan kuva jälkikäteen
      //saveFrame("t.png");
      return true;
