@@ -13,34 +13,42 @@ boolean mirror = true;
 
 Kinect kinect;
 
+//window dimensions
+int init_width = 1240;
+int init_height = 480;  //this will also be the height of the camera-image
+int game_level = 0;    //game level;
+int levels = 2;
+int threshold = 200;    //how much pixels we allow
+boolean playing = false;  //are we playing the game
 // Depth image
 PImage depthImg;
-
+PImage[] wall_images = new PImage[levels];  //tarkoitus, että 5 yhteensä
 // Which pixels do we care about?
 /*around 3m from the kinect-camera*/
 int minDepth = 950;    
 int maxDepth = 980;
-
 // What is the kinect's angle
 float angle;
+color silhouetteColor = color(255, 100, 90);
 
-//window dimensions
-int init_width = 1240;
-int init_height = 480;  //this will also be the height of the camera-image
-
-Wall testWall = new Wall(init_width, init_height);
-boolean playing = false;
+Wall testWall;
 
 void setup() {
   size(1240, 480);
-
   kinect = new Kinect(this);    //kinect's own dimensions is 640x480
   kinect.initDepth();
   kinect.enableMirror(mirror);
   angle = kinect.getTilt();
   
   // Blank image
-  depthImg = new PImage(kinect.width, kinect.height);  //up-scaled dimensions for depthImage 
+  //depthImg = new PImage(kinect.width, kinect.height);    //documentation doesn't recommend, but works... 
+  depthImg = createImage(kinect.width, kinect.height, ARGB);
+  
+  // loading all images at once
+  for (int i = 0; i < wall_images.length; i++) {
+    wall_images[i] = loadImage("taso" + (i+1) + ".png");
+  }
+  //printArray(wall_images);
 }
 
 void draw() {
@@ -48,6 +56,7 @@ void draw() {
   background(200, 200, 200);    
   //MAIN MENU THINGS
   if(!playing){
+    testWall = new Wall(init_width, init_height, game_level);
     textAlign(CENTER, CENTER);
     textSize(32);
     fill(0, 0, 0);
@@ -61,42 +70,56 @@ void draw() {
   }
   //IF PLAY BUTTON PRESSED DRAW WALL
   if(playing){
-    testWall.draw();
+    testWall.draw_wall();
     testWall.growSize();
   }
 
   // Drawing the camera image
   int[] rawDepth = kinect.getRawDepth();  //depthData in some kind of form
   
+  
   for (int i=0; i < rawDepth.length; i++) {
+  //println("rawDepth length: " + rawDepth.length);  //printing is too heavy within the loop
     //int xPix = i % kinect.width;
     //int yPix = i / kinect.height;
     //int horizontalMargin = 0;
     //int verticalMargin = 0;
     //if (xPix > horizontalMargin && xPix < kinect.width - horizontalMargin &&  //magins
     //    yPix > verticalMargin) {
-      if (rawDepth[i] >= minDepth && rawDepth[i] <= maxDepth) {
-        depthImg.pixels[i] = color(255, 100, 90);  //we care only about one color
-      } else {
-        depthImg.pixels[i] = color(200, 200, 200);  //empty space with grey
-      }
+    if (rawDepth[i] >= minDepth && rawDepth[i] <= maxDepth) {
+      depthImg.pixels[i] = silhouetteColor;  //we care only about one color
+    } else {
+      depthImg.pixels[i] = color(200, 200, 100, 0);  //empty space with grey
+    }
     //}
   }
    
-  // Drawing the camera image
+  // Drawing the camera image on top of the wall
   depthImg.updatePixels();      //update necessary
+  //PImage snapshot = createImage("");
+  //depthImg.save("depth_image.jpg");
   imageMode(CENTER);
   image(depthImg, init_width/2, init_height/2); //align-center
   //image(depthImg, 0, 0, init_width, init_height);  //the image we are interested about!!!
-  tint(255, 60);
+  //tint(255, 60);
   fill(0);
   
-  if(testWall.checkEnd(depthImg.pixels)){
+  //end condition
+  if(testWall.checkEnd(depthImg)){
       // testWall = new Wall(width, height, uuskuva);
-      
-      clear();
-      playing = false;
+    clear();
+    playing = false;
+    if (testWall.deviation < threshold) {
+      game_level += 1;  //next level
     }
+    if (game_level == levels) {
+      noLoop();//VICTORY
+      background(200);
+      textAlign(CENTER);
+      text("VICTORY!", init_width/2, 100);
+      text("You passed the game.", init_width/2, 130);
+    }
+  }
     
   /*if(endState){
     imageMode(CORNER);

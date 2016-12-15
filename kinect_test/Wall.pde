@@ -1,23 +1,24 @@
 class Wall{
  float init_wall_x = 1240.0/480*100.0;
  float init_wall_y = 100.0;
- float speed = 1.02;
+ float speed = 1.06;
  float x = init_wall_x;                 //kauimmaisen kuvan dimensiont
  float y = init_wall_y;                  
  int init_width, init_height;
- PImage img;
-    
-    
- Wall(int orig_width, int orig_height){
+ int level;
+ PImage img;                            //wall image
+ PImage masked_img;                     //masked image 
+ int deviation;
+ 
+ Wall(int orig_width, int orig_height, int game_level){
     init_width = orig_width;
     init_height = orig_height;
+    level = game_level;
  }
  
- void draw(){
-    
-   img = loadImage("reikaseinassa.png");
+ void draw_wall(){
+   img = wall_images[level];  //image depends on the level
    imageMode(CENTER);
-    
    image(img, width/2, height/2, x, y);  //(kuva, keskipisteet, dimensiot)kuvan koko kasvaa kun x ja y muuttuvat,
    //perspective lines
    line(width/2 - x/2, height/2 - y/2, 0, 0);
@@ -38,24 +39,27 @@ class Wall{
    }
  }
  
- boolean checkEnd(int[] silhouette){
+ boolean checkEnd(PImage depth_img) {
+   //int[] data = depth_img.pixels;  
    //check if collision with player etc "win state"
-   if(x == init_width && y == init_height){
-     img.loadPixels();
-     //println(silhouette.length);
-     //println(img.pixels.length);
-     /*for(int i = 0; i < silhouette.length-1; i += 5){
-       if(silhouette[i] == color(255, 100, 90) && img.pixels[i] == color(0, 0, 0)){
-         println("siluetti osuu mustaan");
-       }
-       else if(silhouette[i] == color(255, 100, 90)){
-         println("siluetti ei mustalla");
-       }
-       else if(img.pixels[i] == color(0, 0, 0)){
-         println("mustaa on");
-       }
-     }*/
+   if(x == init_width && y == init_height){  //when the image is zoomed to its full extent. All images have the same size.
+
+     masked_img = img.get(300, 0, 640, 480);  //cropping the wall image into the right dimension
+     masked_img.updatePixels();
+     //depth_img.save("depth_image.png");
+     //depth_img.mask(masked_img);
      
+     
+     //depth_img.save("masked.png");
+     masked_img.save("masked.png");
+     println(depth_img.pixels.length);
+     //Comparing the pixels of two pictures
+     for (int i=0; i < depth_img.pixels.length; i += 1) {
+       if (masked_img.pixels[i] != color(0,0,0) && depth_img.pixels[i] == silhouetteColor) {
+         deviation += 1;
+       }
+     }
+     println("deviation: " + deviation);
      
      x = init_wall_x;
      y = init_wall_y;
