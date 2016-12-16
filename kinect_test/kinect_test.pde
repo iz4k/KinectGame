@@ -55,6 +55,15 @@ void draw() {
   frameRate(30);
   background(200, 200, 200);    
   //MAIN MENU THINGS
+  
+  if(!playing && game_level == levels){
+    delay(5000);
+    game_level = 0;
+  }
+  else if(!playing && game_level != 0){
+    delay(5000);
+    playing = true;
+  }
   if(!playing){
     testWall = new Wall(init_width, init_height, game_level);
     textAlign(CENTER, CENTER);
@@ -105,21 +114,28 @@ void draw() {
   fill(0);
   
   //end condition
-  if(testWall.checkEnd(depthImg)){
-      // testWall = new Wall(width, height, uuskuva);
-    clear();
-    playing = false;
-    if (testWall.deviation < threshold) {
-      game_level += 1;  //next level
+  if(playing){
+    if(testWall.checkEnd(depthImg)){
+        // testWall = new Wall(width, height, uuskuva);
+      clear();
+      playing = false;
+      if (testWall.deviation < threshold) {
+        game_level += 1;  //next level
+        background(200);
+        textAlign(CENTER);
+        text("You passed the level!", init_width/2, 100);
+        text("Next level begins in 5 seconds", init_width/2, 130);
+        text("Get ready", init_width/2, 160);
+        testWall = new Wall(init_width, init_height, game_level);
+      }
+      if (game_level == levels) {
+        background(200);
+        textAlign(CENTER);
+        text("VICTORY!", init_width/2, 100);
+        text("You passed the game.", init_width/2, 130);
+      }
     }
-    if (game_level == levels) {
-      noLoop();//VICTORY
-      background(200);
-      textAlign(CENTER);
-      text("VICTORY!", init_width/2, 100);
-      text("You passed the game.", init_width/2, 130);
-    }
-  }
+}
     
   /*if(endState){
     imageMode(CORNER);
