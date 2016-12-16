@@ -18,7 +18,7 @@ int init_width = 1240;
 int init_height = 480;  //this will also be the height of the camera-image
 int game_level = 0;    //game level;
 int levels = 2;
-int threshold = 200;    //how much pixels we allow
+int threshold = 2000;    //how much pixels we allow
 boolean playing = false;  //are we playing the game
 // Depth image
 PImage depthImg;
@@ -29,7 +29,7 @@ int minDepth = 950;
 int maxDepth = 980;
 // What is the kinect's angle
 float angle;
-color silhouetteColor = color(255, 100, 90);
+color silhouetteColor = color(255, 100, 90, 160);
 
 Wall testWall;
 
@@ -111,6 +111,7 @@ void draw() {
     playing = false;
     if (testWall.deviation < threshold) {
       game_level += 1;  //next level
+      //settiä
     }
     if (game_level == levels) {
       noLoop();//VICTORY
