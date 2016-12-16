@@ -1,7 +1,7 @@
 class Wall{
  float init_wall_x = 1240.0/480*100.0;
  float init_wall_y = 100.0;
- float speed = 1.06;
+ float speed = 1.02;
  float x = init_wall_x;                 //kauimmaisen kuvan dimensiont
  float y = init_wall_y;                  
  int init_width, init_height;
@@ -52,7 +52,7 @@ class Wall{
      
      //depth_img.save("masked.png");
      masked_img.save("masked.png");
-     println(depth_img.pixels.length);
+     //println(depth_img.pixels.length);
      //Comparing the pixels of two pictures
      for (int i=0; i < depth_img.pixels.length; i += 1) {
        if (masked_img.pixels[i] != color(0,0,0) && depth_img.pixels[i] == silhouetteColor) {
